@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="" crossorigin="" />
+
+    <!-- leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="" crossorigin=""></script>
+
+    <title>Départements Corse</title>
+    <meta name="viewport" content="">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            height: 100vh;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <!-- Inclure le fichier JavaScript contenant les données GeoJSON -->
+    <script src="./data/cpmsi_corse.js"></script>
+    <script>
+        // Fonction pour générer une couleur aléatoire
+        function getRandomColor() {
+            const hue = Math.floor(Math.random() * 360);
+            const saturation = Math.floor(Math.random() * 100);
+            const lightness = Math.floor(Math.random() * 100);
+            return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        }
+
+        // Carte basique Leaflet avec une position de départ
+        var map = L.map("map").setView([42.219716, 9.133181], 9);
+
+        // Ajout de OpenStreetMap
+        var osmMap = L.tileLayer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+                maxZoom: 19,
+                attribution: 'OSM'
+            }
+        ).addTo(map);
+
+        // Utilisation des données GeoJSON
+        L.geoJSON(geojsonData, {
+            // Style de la couche
+            style: function (feature) {
+                return {
+                    color: "black",
+                    weight: 2,
+                    fillOpacity: 0.5,
+                    fillColor: getRandomColor() // Utiliser la couleur aléatoire
+                };
+            },
+
+            // Fonctionnement de la POP-UP
+            onEachFeature: function (feature, layer) {
+                layer.bindPopup(
+                    "<h1>" + feature.properties.maille + "</h1>" +
+                    "<p>Communes de la maille : " + feature.properties.commune + "</p>"
+                );
+            },
+        }).addTo(map);
+    </script>
+</body>
+
+</html>
